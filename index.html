@@ -66,6 +66,18 @@
   .stats .k { font-weight: bold; }
   .verde { color: #16a34a; } .rojo { color: #dc2626; }
 
+  /* --- Iconos de PDV --- */
+  .pv-marker { background: transparent; border: none; }
+  .pv-m {
+    width: 22px; height: 22px; border-radius: 50%; box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: bold; color: #fff; font-family: Arial, sans-serif;
+    box-shadow: 0 1px 3px rgba(0,0,0,.45); border: 1px solid rgba(0,0,0,.15);
+  }
+  .pv-v { background: #16a34a; }
+  .pv-p { background: #dc2626; }
+  .pv-r { background: #f97316; }
+
   /* --- Leyenda --- */
   .legend {
     position: absolute; bottom: 25px; left: 12px; z-index: 1000;
@@ -256,9 +268,9 @@
   </div>
 </div>
 <div class="legend">
-  <span class="verde">&#9679;</span> Visitado &nbsp;&nbsp;
-  <span class="rojo">&#9679;</span> Pendiente &nbsp;&nbsp;
-  <span style="color:#f97316">&#9679;</span> A revisar
+  <span class="verde">&#10003;</span> Visitado &nbsp;&nbsp;
+  <span class="rojo">&#10005;</span> Pendiente &nbsp;&nbsp;
+  <span style="color:#f97316">?</span> A revisar
 </div>
 <div class="lista">
   <div class="head"><span id="listaTitulo">PDV</span><button id="btnCerrarLista">&#10005;</button></div>
@@ -301,10 +313,14 @@ var group = L.markerClusterGroup({
 group.addTo(map);
 
 DATOS.forEach(function(d, i){
-  var color = d[9] ? '#f97316' : (d[7] ? '#16a34a' : '#dc2626');
-  var m = L.circleMarker([d[0], d[1]], {
-    radius: d[9] ? 6 : 5, color: color, weight: 1.2,
-    fill: true, fillColor: color, fillOpacity: .8
+  var cls = d[9] ? 'pv-r' : (d[7] ? 'pv-v' : 'pv-p');
+  var sym = d[9] ? '?' : (d[7] ? '✓' : '✕');
+  var m = L.marker([d[0], d[1]], {
+    icon: L.divIcon({
+      className: 'pv-marker',
+      html: '<div class="pv-m ' + cls + '">' + sym + '</div>',
+      iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -12]
+    })
   });
   var estadoText = d[7] ? 'VISITADO' + (d[8] > 1 ? ' (' + d[8] + ' visitas)' : '') : 'PENDIENTE';
   var h = '<b style="color:' + (d[7] ? '#16a34a' : '#dc2626') + '">' + estadoText + '</b><br>';
