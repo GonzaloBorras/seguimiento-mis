@@ -355,6 +355,38 @@ var busqueda = document.getElementById('busqueda');
 var stats = document.getElementById('stats');
 var kpiBar = document.getElementById('kpiBar');
 var listaVisible = false;
+var zonaLayer = null;
+
+function cross(o, a, b){ return (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0]); }
+
+function convexHull(puntos){
+  if (puntos.length < 3) return null;
+  puntos = puntos.slice().sort(function(a, b){ return a[0]-b[0] || a[1]-b[1]; });
+  var res = [];
+  for (var pass = 0; pass < 2; pass++){
+    var n = res.length;
+    for (var i = 0; i < puntos.length; i++){
+      var p = puntos[i];
+      while (res.length - n >= 2 && cross(res[res.length-2], res[res.length-1], p) <= 0) res.pop();
+      res.push(p);
+    }
+    res.pop();
+    puntos.reverse();
+  }
+  return res;
+}
+
+function dibujarZona(visibles){
+  if (zonaLayer) { map.removeLayer(zonaLayer); zonaLayer = null; }
+  var v = selVendedor.value;
+  if (v === 'ALL' || visibles.length < 3) return;
+  var hull = convexHull(visibles.map(function(i){ return [DATOS[i][0], DATOS[i][1]]; }));
+  if (!hull || hull.length < 3) return;
+  zonaLayer = L.polygon(hull, {
+    color: '#2563eb', weight: 2, fillColor: '#2563eb', fillOpacity: 0.10, dashArray: '5 5'
+  }).addTo(map);
+  zonaLayer.bindPopup('<b>' + esc(v) + '</b> &mdash; ' + visibles.length + ' PDV en su zona');
+}
 
 function coincide(d){
   var v = selVendedor.value, l = selLocalidad.value, c = selCanal.value, e = selEstado.value;
@@ -396,6 +428,7 @@ function aplicarFiltro(encuadrar){
     '</span> &nbsp;|&nbsp; Avance: ' + pct + '%' +
     (fr ? ' &nbsp;|&nbsp; A revisar: <span class="r">' + fr + '</span>' : '');
   actualizarLista();
+  dibujarZona(visibles);
   if (encuadrar && visibles.length > 0) {
     map.fitBounds(group.getBounds(), { maxZoom: 14, padding: [30, 30] });
   }
