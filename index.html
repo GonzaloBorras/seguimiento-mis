@@ -30,36 +30,39 @@
   /* --- Panel de filtros --- */
   .panel {
     position: absolute; top: 12px; left: 12px; z-index: 1000;
-    background: #fff; padding: 10px 12px; border-radius: 8px;
-    box-shadow: 0 1px 5px rgba(0,0,0,.35); width: fit-content;
-    min-width: 210px; max-width: calc(100vw - 24px);
+    background: #fff; padding: 8px 10px; border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.35); width: 250px;
+    max-width: calc(100vw - 24px); max-height: calc(100vh - 24px); overflow-y: auto;
   }
   .panel-head {
     display: flex; justify-content: space-between; align-items: center;
-    font-weight: bold; font-size: 13px; margin-bottom: 6px;
+    font-weight: bold; font-size: 12px; margin-bottom: 4px;
   }
   #btnPanel {
     border: none; background: #eee; border-radius: 4px;
-    width: 24px; height: 24px; cursor: pointer; font-size: 15px; line-height: 1; color: #333;
+    width: 20px; height: 20px; cursor: pointer; font-size: 13px; line-height: 1; color: #333;
   }
   #btnPanel:hover { background: #ddd; }
   .panel select, .panel input[type=text] {
-    width: 100%; padding: 6px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px;
-    box-sizing: border-box; margin-bottom: 6px;
+    width: 100%; padding: 4px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px;
+    box-sizing: border-box; margin-bottom: 4px;
   }
-  .busca-row { position: relative; }
-  .busca-row input { padding-right: 26px; margin-bottom: 4px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 6px; }
+  .lbl, .grid2 label { font-size: 11px; color: #555; display: block; margin-bottom: 2px; }
+  .grid2 select { margin-bottom: 5px; }
+  .busca-row { position: relative; margin-bottom: 4px; }
+  .busca-row input { margin-bottom: 0; padding-right: 24px; }
   .busca-row button {
-    position: absolute; right: 4px; top: 4px; border: none; background: transparent;
-    cursor: pointer; font-size: 14px; color: #888;
+    position: absolute; right: 3px; top: 3px; border: none; background: transparent;
+    cursor: pointer; font-size: 13px; color: #888;
   }
-  .btn-row { display: flex; gap: 6px; margin-top: 2px; }
+  .btn-row { display: flex; gap: 5px; margin-top: 2px; }
   .btn-row button {
-    flex: 1; padding: 6px; font-size: 12px; border: 1px solid #ccc;
+    flex: 1; padding: 4px; font-size: 11px; border: 1px solid #ccc;
     border-radius: 4px; background: #f3f4f6; cursor: pointer; color: #333;
   }
   .btn-row button:hover { background: #e5e7eb; }
-  .stats { margin-top: 8px; font-size: 13px; line-height: 1.6; max-height: 45vh; overflow-y: auto; }
+  .stats { margin-top: 6px; font-size: 12px; line-height: 1.55; max-height: 25vh; overflow-y: auto; }
   .stats .k { font-weight: bold; }
   .verde { color: #16a34a; } .rojo { color: #dc2626; }
 
@@ -88,7 +91,7 @@
 
   /* --- Responsive --- */
   @media (max-width: 700px) {
-    .panel { top: 52px; left: 8px; min-width: 185px; }
+    .panel { top: 52px; left: 8px; width: calc(100vw - 16px); max-width: calc(100vw - 16px); }
     .kpi-bar { top: 10px; font-size: 12px; padding: 4px 10px; }
     .legend { display: none; }
     .lista { top: 100px; right: 8px; width: calc(100vw - 16px); }
@@ -97,6 +100,7 @@
   /* --- Modo oscuro --- */
   body.oscuro .kpi-bar, body.oscuro .panel, body.oscuro .legend, body.oscuro .lista { background: #1f2937; color: #eee; box-shadow: 0 1px 5px rgba(0,0,0,.6); }
   body.oscuro .panel select, body.oscuro .panel input[type=text] { background: #111827; color: #eee; border-color: #374151; }
+  body.oscuro .lbl, body.oscuro .grid2 label { color: #9ca3af; }
   body.oscuro #btnPanel, body.oscuro .btn-row button { background: #374151; color: #eee; border-color: #4b5563; }
   body.oscuro .btn-row button:hover { background: #4b5563; }
   body.oscuro .lista .head { border-color: #374151; }
@@ -118,14 +122,16 @@
     <button id="btnPanel" title="Mostrar / ocultar panel">&#8722;</button>
   </div>
   <div id="panelBody">
-  <label style="font-size:12px;color:#555">Buscar por nombre, direcci&#243;n o ID</label>
+  <label class="lbl">Buscar por nombre, direcci&#243;n o ID</label>
   <div class="busca-row">
     <input type="text" id="busqueda" placeholder="Escrib&#237; para buscar..." autocomplete="off">
     <button id="btnLimpiarBusqueda" title="Limpiar b&#250;squeda">&#10005;</button>
   </div>
-  <label style="font-size:12px;color:#555">Filtrar por vendedor</label>
-  <select id="selVendedor">
-    <option value="ALL">Todos</option>
+  <div class="grid2">
+    <div>
+      <label>Vendedor</label>
+      <select id="selVendedor">
+        <option value="ALL">Todos</option>
 <option value="ALAN SALINAS">ALAN SALINAS</option>
 <option value="ALFREDO PEREZ">ALFREDO PEREZ</option>
 <option value="APAS BRUNO">APAS BRUNO</option>
@@ -152,10 +158,12 @@
 <option value="MISAEL GOMEZ">MISAEL GOMEZ</option>
 <option value="RODRIGUEZ GUSTAVO">RODRIGUEZ GUSTAVO</option>
 <option value="VENDEDOR GENERICO">VENDEDOR GENERICO</option>
-  </select>
-  <label style="font-size:12px;color:#555">Filtrar por localidad</label>
-  <select id="selLocalidad">
-    <option value="ALL">Todas</option>
+      </select>
+    </div>
+    <div>
+      <label>Localidad</label>
+      <select id="selLocalidad">
+        <option value="ALL">Todas</option>
 <option value="7 de Abril">7 de Abril</option>
 <option value="Acheral">Acheral</option>
 <option value="Aguilares">Aguilares</option>
@@ -215,10 +223,12 @@
 <option value="Villa Nueva de Monte Rico">Villa Nueva de Monte Rico</option>
 <option value="Villa Quinteros">Villa Quinteros</option>
 <option value="Yerba Buena">Yerba Buena</option>
-  </select>
-  <label style="font-size:12px;color:#555">Filtrar por canal</label>
-  <select id="selCanal">
-    <option value="ALL">Todos</option>
+      </select>
+    </div>
+    <div>
+      <label>Canal</label>
+      <select id="selCanal">
+        <option value="ALL">Todos</option>
 <option value="#N/D">#N/D</option>
 <option value="Autoservicio">Autoservicio</option>
 <option value="Mayorista">Mayorista</option>
@@ -226,14 +236,18 @@
 <option value="On Premise">On Premise</option>
 <option value="Petroleras">Petroleras</option>
 <option value="Tradicional">Tradicional</option>
-  </select>
-  <label style="font-size:12px;color:#555">Filtrar por estado</label>
-  <select id="selEstado">
-    <option value="ALL">Todos</option>
-    <option value="VIS">Visitados</option>
-    <option value="PEND">Pendientes</option>
-    <option value="REV">A revisar</option>
-  </select>
+      </select>
+    </div>
+    <div>
+      <label>Estado</label>
+      <select id="selEstado">
+        <option value="ALL">Todos</option>
+        <option value="VIS">Visitados</option>
+        <option value="PEND">Pendientes</option>
+        <option value="REV">A revisar</option>
+      </select>
+    </div>
+  </div>
   <div class="btn-row">
     <button id="btnReset" title="Ver todos los PDV">Ver todo</button>
     <button id="btnLista" title="Mostrar lista de los PDV filtrados">Lista</button>
